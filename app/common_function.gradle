@@ -1,0 +1,14 @@
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
+/**
+ * 返回当前编译时间
+ */
+def getCurrentTime() {
+    DateFormat df = new SimpleDateFormat("yyyyMMddhhmm")
+    return df.format(Calendar.getInstance(Locale.CHINA).getTime())
+}
+
+ext {
+    currentTime = getCurrentTime()
+}
