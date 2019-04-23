@@ -2,11 +2,13 @@ apply plugin: 'com.android.application'
 apply from: "common_function.gradle"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
+
     defaultConfig {
         applicationId "com.ziv.demo.gradletask"
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -18,17 +20,33 @@ android {
         }
     }
     android.applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "${variant.name}-${variant.versionName}-${currentTime}.apk"
+        println("build: time -> ${currentTime}")
+//        variant.outputs.all {
+//            println("build: ${currentTime}")
+//            outputFileName = "${variant.name}-${variant.versionName}-${currentTime}.apk"
+//        }
+        println("build: type -> " + variant.name)
+        println("build: version -> " + variant.versionName)
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                //这里修改apk文件名
+                println("build: packageName -> " + defaultConfig.applicationId)
+                def fileName = defaultConfig.applicationId.subSequence(
+                        defaultConfig.applicationId.lastIndexOf(".") + 1,
+                        defaultConfig.applicationId.length()) + "-${currentTime}.apk"
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
         }
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+//    compile 'com.android.support.constraint:constraint-layout:1.1.3'
+    testCompile 'junit:junit:4.12'
+//    androidTestCompile 'com.android.support.test:runner:1.0.2'
+//    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
